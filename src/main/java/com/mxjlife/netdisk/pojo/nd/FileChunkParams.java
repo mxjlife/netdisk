@@ -1,6 +1,7 @@
-package com.mxjlife.netdisk.pojo;
+package com.mxjlife.netdisk.pojo.nd;
 
 import lombok.Data;
+import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -10,16 +11,13 @@ import org.springframework.web.multipart.MultipartFile;
  * date 2020/4/3 11:11
  */
 @Data
-public class FileBlockParams {
+@ToString(exclude={"file"})
+public class FileChunkParams {
 
     /**
-     * 是否分块
+     * 是否分块, true分块上传, false未分块
      */
-    private int block;
-    /**
-     * 当前块名称
-     */
-    private String blockName;
+    private boolean boolchunk;
     /**
      * 文件md5
      */
@@ -27,27 +25,23 @@ public class FileBlockParams {
     /**
      * 块MD5
      */
-    private String blockMd5;
+    private String chunkMd5;
     /**
-     * 块大小
+     * 文件块序号, 从0开始，-1为合并
      */
-    private String blockSize;
+    private int chunkIndex;
     /**
-     * 文件块序号
+     * 块数量
      */
-    private String blockNo;
+    private int chunkNum;
     /**
      * 文件名
      */
-    private String fileName;
-    /**
-     * 文件类型
-     */
-    private String fileType;
+//    private String fileName;
     /**
      * 文件大小
      */
-    private String fileSize;
+//    private Long fileSize;
     /**
      * 文件
      */

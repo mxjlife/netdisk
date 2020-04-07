@@ -1,7 +1,6 @@
-package com.mxjlife.netdisk.pojo;
+package com.mxjlife.netdisk.pojo.base;
 
-import com.mxjlife.netdisk.common.constant.SysCodeEnum;
-import lombok.AllArgsConstructor;
+import com.mxjlife.netdisk.common.enums.SysCodeEnum;
 import lombok.Data;
 
 /**
@@ -12,32 +11,29 @@ import lombok.Data;
  * date 2019/1/2 11:40
  */
 @Data
-public class ResponseDTO<T> {
-    private Integer code;
-    private String msg;
+public class ResponseVO<T> extends BaseResult {
     private T data;
 
-    public ResponseDTO() {
+    public ResponseVO() {
         this.code = SysCodeEnum.RESP_SUCCESS.getCode();
         this.msg = SysCodeEnum.RESP_SUCCESS.getMsg();
     }
 
-    public ResponseDTO(SysCodeEnum codeEnum) {
+    public ResponseVO(SysCodeEnum codeEnum) {
         this.code = codeEnum.getCode();
         this.msg = codeEnum.getMsg();
     }
 
-    public ResponseDTO(SysCodeEnum codeEnum, T data) {
+    public ResponseVO(SysCodeEnum codeEnum, T data) {
         this.code = codeEnum.getCode();
         this.msg = codeEnum.getMsg();
         this.data = data;
     }
 
-    public ResponseDTO(Integer code, String msg, T data) {
+    public ResponseVO(Integer code, String msg, T data) {
         this.code = code;
         this.msg = msg;
         this.data = data;
     }
-
 
 }

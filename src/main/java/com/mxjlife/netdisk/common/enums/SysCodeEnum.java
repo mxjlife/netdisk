@@ -1,4 +1,4 @@
-package com.mxjlife.netdisk.common.constant;
+package com.mxjlife.netdisk.common.enums;
 
 import lombok.Getter;
 
@@ -89,7 +89,13 @@ public enum SysCodeEnum {
     /**
      * 无法手动踢出自己，请尝试退出登录操作！
      */
-    RESP_KICKOUT_SELF(5004, "无法手动踢出自己，请尝试退出登录操作！");
+    RESP_KICKOUT_SELF(5004, "无法手动踢出自己，请尝试退出登录操作！"),
+
+
+    FILE_UPLOAD_ERROR(2001101, "文件上传失败"),
+
+
+    ;
 
     /**
      * 状态码
