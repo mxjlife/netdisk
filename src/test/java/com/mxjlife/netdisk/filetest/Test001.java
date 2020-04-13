@@ -1,6 +1,10 @@
 package com.mxjlife.netdisk.filetest;
 
+import com.mxjlife.netdisk.common.cache.GuavaCache;
+import com.mxjlife.netdisk.common.constant.Cons;
+import com.mxjlife.netdisk.common.util.BuilderUtils;
 import com.mxjlife.netdisk.common.util.NdUtils;
+import com.mxjlife.netdisk.pojo.nd.FileInfoPO;
 import org.apache.commons.codec.cli.Digest;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
@@ -45,7 +49,7 @@ public class Test001 {
 
     @Test
     public void test003() throws IOException {
-        File file = new File("E:\\Downloads");
+        File file = new File("D:\\Java\\tool\\Xmanager Enterprise 5\\Fonts\\75dpi\\utrg__24.pcf.Z");
         File[] files = file.listFiles();
         Tika tika = new Tika();
         for (File f : files) {
@@ -83,6 +87,45 @@ public class Test001 {
         FileUtils.copyFile(file, stream);
         Thread.sleep(10000);
 //        DigestUtils.md5Hex(fis);
+    }
+
+    @Test
+    public void test006() throws IOException, InterruptedException {
+        File file = new File("E:\\Downloads\\BaiduNetdisk_6.8.1.3.exe");
+        String s = DigestUtils.md5Hex(FileUtils.openInputStream(file));
+        System.out.println(s.equals("6469e1e50910ad159e20ec94a2e3d0e1"));
+    }
+
+    @Test
+    public void test007() throws IOException, InterruptedException {
+        String md5 = "cc97bfb7495be56900c66429a589e914";
+        String rootPath = "E:\\tmpfile";
+
+        String filePath = rootPath + "\\f\\123456754676";
+        String tmpDirPath = rootPath + File.separator + Cons.DIR_FILE_TMP_DIR + File.separator + md5;
+
+            File resFile = new File(filePath);
+            if (!resFile.getParentFile().exists()) {
+                resFile.mkdirs();
+            }
+                resFile.deleteOnExit();
+            File tmpDir = new File(tmpDirPath);
+        File[] tmpFiles = tmpDir.listFiles();
+        Arrays.sort(tmpFiles, Comparator.comparingInt(file -> Integer.parseInt(file.getName())));
+        FileOutputStream resFos = new FileOutputStream(resFile, true);
+        System.out.println(2);
+        for (File tmpFile : tmpFiles) {
+            System.out.println(tmpFile.getName());
+            // 每次合并重新读取，防止流过大
+            // 合并到最终文件
+            FileUtils.copyFile(tmpFile, resFos);
+            resFos.flush();
+
+        }
+        System.out.println(111);
+        resFos.close();
+        // 校验写入结果的MD5
+
     }
 
 }

@@ -39,7 +39,7 @@ public class FileServiceImpl implements FileService {
             return writeSingleFile(fileParams);
         }
         // 分块上传
-        if(fileParams.getChunkIndex() == -1){
+        if(fileParams.getChunk() == -1){
             // 合并文件
             mergeFile(fileParams);
         }else{
@@ -69,12 +69,13 @@ public class FileServiceImpl implements FileService {
             }
             fileParams.getFile().transferTo(file);
             // 校验写入结果的MD5
-            boolean b = checkMd5(file, fileParams.getFileMd5());
-            if(b){
+//            boolean b = checkMd5(file, fileParams.getFileMd5());
+//            if(b){
                 fileInfoMapper.insert(fileInfo);
-            }
-            log.info("文件[{}],写入{}", fileInfo.getFileName(), b?"成功":"失败");
-            return b;
+//            }
+//            log.info("文件[{}],写入{}", fileInfo.getFileName(), b?"成功":"失败");
+            log.info("文件[{}],写入{}", fileInfo.getFileName(), "成功");
+            return true;
         } catch (IOException e) {
             log.error("文件[{}]写入失败{}", fileInfo.getFileName(), e);
         }
@@ -86,10 +87,10 @@ public class FileServiceImpl implements FileService {
      * 分块文件写入临时文件夹
      */
     private boolean writeTmpFile(FileChunkParams fileParams){
-        log.info("文件分块上传，文件[{}],块[{}]开始上传", fileParams.getFile().getOriginalFilename(), fileParams.getChunkIndex());
+        log.info("文件分块上传，文件[{}],块[{}]开始上传", fileParams.getFile().getOriginalFilename(), fileParams.getChunk());
         String rootPath = GuavaCache.get(Cons.FILE_ROOT_PATH_KEY);
         MultipartFile inputFile = fileParams.getFile();
-        String path = rootPath + File.separator + Cons.DIR_FILE_TMP_DIR + File.separator + fileParams.getFileMd5() + File.separator + fileParams.getChunkIndex();
+        String path = rootPath + File.separator + Cons.DIR_FILE_TMP_DIR + File.separator + fileParams.getFileMd5() + File.separator + fileParams.getChunk();
         try {
             File file = new File(path);
             if(!file.getParentFile().exists()){
@@ -109,11 +110,14 @@ public class FileServiceImpl implements FileService {
 //            FileUtils.copyInputStreamToFile(inputFile.getInputStream(), file);
             fileParams.getFile().transferTo(file);
             // 校验写入结果的MD5
-            boolean b = checkMd5(file, fileParams.getFileMd5());
-            log.info("文件[{}],块[{}]写入{}", fileParams.getFile().getOriginalFilename(), fileParams.getChunkIndex(), b?"成功":"失败");
-            return b;
+//            boolean b = checkMd5(file, fileParams.getFileMd5());
+            log.info("文件[{}],块[{}]写入完成", fileParams.getFile().getOriginalFilename(), fileParams.getChunk());
+            if(fileParams.getChunk() == fileParams.getChunks()-1){
+                mergeFile(fileParams);
+            }
+            return true;
         } catch (IOException e) {
-            log.error("文件[{}],块[{}]写入失败{}", inputFile.getOriginalFilename(), fileParams.getChunkIndex(), e);
+            log.error("文件[{}],块[{}]写入失败{}", inputFile.getOriginalFilename(), fileParams.getChunk(), e);
         }
         return false;
     }
@@ -148,21 +152,21 @@ public class FileServiceImpl implements FileService {
                 log.error("文件[{}]未找到分片文件", fileInfo.getFileName());
                 return false;
             }
-            Arrays.sort(tmpFiles, Comparator.comparing(File::getName));
+            Arrays.sort(tmpFiles, Comparator.comparingInt(file -> Integer.parseInt(file.getName())));
+            FileOutputStream resFos = new FileOutputStream(resFile, true);
             for (File tmpFile : tmpFiles) {
-                // 每次合并重新读取，防止流过大
-                FileOutputStream resFos = new FileOutputStream(resFile, true);
                 // 合并到最终文件
                 FileUtils.copyFile(tmpFile, resFos);
-                resFos.close();
+                resFos.flush();
             }
-            FileUtils.deleteDirectory(tmpDir);
+            resFos.close();
             // 校验写入结果的MD5
             boolean b = checkMd5(resFile, fileParams.getFileMd5());
             if(b){
                 fileInfoMapper.insert(fileInfo);
+                FileUtils.deleteDirectory(tmpDir);
             }
-            log.info("文件[{}],合并{}", fileInfo.getFileName(), b?"成功":"失败");
+            log.info("文件[{}] uuid[{}],合并{}", fileInfo.getFileName(), fileInfo.getUuid(), b?"成功":"失败");
             return b;
         } catch (Exception e) {
             log.error("文件[{}],合并失败{}", fileInfo.getFileName(), e);

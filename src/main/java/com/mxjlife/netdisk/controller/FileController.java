@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * description: 操作文件
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @CrossOrigin
 @Slf4j
+@RequestMapping("/file")
 public class FileController {
     @Autowired
     FileService fileService;
@@ -26,7 +28,21 @@ public class FileController {
      * 文件上传
      */
     @PostMapping(value = "/upload")
-    public BaseResult upload(@RequestBody FileChunkParams fileParams){
+    public BaseResult upload(@RequestParam(value = "file",required = false) MultipartFile file,
+                             @RequestParam("name") String name,
+                             @RequestParam("chunk") int chunk,
+                             @RequestParam("chunks") int chunks,
+                             @RequestParam("size") long size,
+                             @RequestParam("md5") String md5){
+        FileChunkParams fileParams = new FileChunkParams();
+        fileParams.setChunk(chunk);
+        fileParams.setChunks(chunks);
+        fileParams.setFileMd5(md5);
+        fileParams.setFileSize(size);
+        fileParams.setFileName(name);
+        fileParams.setFile(file);
+        fileParams.setBoolchunk(chunks > 1);
+
         log.info("文件上传-> {}", fileParams);
         BaseResult resp = new BaseResult();
         boolean b = fileService.writeChunkFile(fileParams);

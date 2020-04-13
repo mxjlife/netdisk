@@ -10,25 +10,37 @@ spring:
   http:
     encoding:
       charset: utf-8
-    servlet:
-      multipart:
-        max-file-size: 256Mb
-        max-request-size: 1024MB
+  servlet:
+    multipart:
+      max-file-size: 256MB
+      max-request-size: 1024MB
   thymeleaf:
     prefix: classpath:/templates/
     suffix=: .html
     mode: HTML5
+  mvc:
+    static-path-pattern: /static/**
   jackson:
     default-property-inclusion: non_null
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/manager?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123456
-    maxPoolSize: 30
-    minIdle: 5
-    connectionTestQuery: SELECT 1
-
-
+    driver-class-name: org.sqlite.JDBC
+    # 方式一：  引用外部文件
+    url: jdbc:sqlite:D:/home/db/netdisk.db
+    #方式二： 引用项目中的文件
+#    url: jdbc:sqlite::resource:db/netdisk.db
+    username:
+    password:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/manager?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: 123456
+#    maxPoolSize: 30
+#    minIdle: 5
+#    connectionTestQuery: SELECT 1
+logging:
+  level:
+    com.mxjlife.netdisk.mapper: debug
+mybatis:
+  mapperLocations: mybatis/*Mapper.xml

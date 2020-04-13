@@ -19,7 +19,7 @@
     </resultMap>
 
     <sql id="column_name" >
-        `id`, `system`, `keyspace`, `key`, `value`, `desc`, `status`, `create_user`, `modify_user`, `remark`, `create_time`, `update_time`
+        `id`, `system`, `keyspace`, `key`, `value`, `desc`, `status`, `create_user`, `modify_user`, `remark`
     </sql>
 
     <sql id="table_name">

@@ -27,21 +27,21 @@ public class FileChunkParams {
      */
     private String chunkMd5;
     /**
-     * 文件块序号, 从0开始，-1为合并
+     * 文件块序号, 从0开始
      */
-    private int chunkIndex;
+    private int chunk;
     /**
      * 块数量
      */
-    private int chunkNum;
+    private int chunks;
     /**
      * 文件名
      */
-//    private String fileName;
+    private String fileName;
     /**
      * 文件大小
      */
-//    private Long fileSize;
+    private Long fileSize;
     /**
      * 文件
      */
